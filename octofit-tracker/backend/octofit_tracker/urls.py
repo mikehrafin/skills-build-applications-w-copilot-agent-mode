@@ -69,34 +69,44 @@ router.register(r'workouts', WorkoutViewSet)
 router.register(r'leaderboard', LeaderboardViewSet)
 
 from django.http import HttpResponse
+import os
 
 def root_view(request):
-    html = """
+    # Get the base URL dynamically
+    codespace_name = os.environ.get('CODESPACE_NAME', '')
+    if codespace_name:
+        base_url = f"https://{codespace_name}-8000.app.github.dev"
+    else:
+        base_url = f"http://{request.get_host()}"
+    
+    html = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>API Root</title>
         <style>
-            body { font-family: Arial, sans-serif; margin: 40px; }
-            h1 { color: #333; }
-            ul { list-style-type: none; padding: 0; }
-            li { margin: 10px 0; }
-            a { color: #0066cc; text-decoration: none; font-size: 18px; }
-            a:hover { text-decoration: underline; }
+            body {{ font-family: Arial, sans-serif; margin: 40px; }}
+            h1 {{ color: #333; }}
+            ul {{ list-style-type: none; padding: 0; }}
+            li {{ margin: 10px 0; }}
+            a {{ color: #0066cc; text-decoration: none; font-size: 18px; }}
+            a:hover {{ text-decoration: underline; }}
+            .info {{ color: #666; font-size: 14px; margin-top: 20px; }}
         </style>
     </head>
     <body>
         <h1>API Root</h1>
         <p>Welcome to the OctoFit Tracker API! Choose an endpoint below:</p>
         <ul>
-            <li><a href="/api/">API Browser</a> - Browse all API endpoints</li>
-            <li><a href="/api/activities/">Activities</a> - View and manage activities</li>
-            <li><a href="/api/users/">Users</a> - View and manage users</li>
-            <li><a href="/api/teams/">Teams</a> - View and manage teams</li>
-            <li><a href="/api/workouts/">Workouts</a> - View and manage workouts</li>
-            <li><a href="/api/leaderboard/">Leaderboard</a> - View team leaderboard</li>
-            <li><a href="/admin/">Admin</a> - Django admin panel</li>
+            <li><a href="{base_url}/api/">API Browser</a> - Browse all API endpoints</li>
+            <li><a href="{base_url}/api/activities/">Activities</a> - View and manage activities</li>
+            <li><a href="{base_url}/api/users/">Users</a> - View and manage users</li>
+            <li><a href="{base_url}/api/teams/">Teams</a> - View and manage teams</li>
+            <li><a href="{base_url}/api/workouts/">Workouts</a> - View and manage workouts</li>
+            <li><a href="{base_url}/api/leaderboard/">Leaderboard</a> - View team leaderboard</li>
+            <li><a href="{base_url}/admin/">Admin</a> - Django admin panel</li>
         </ul>
+        <div class="info">Base URL: {base_url}</div>
     </body>
     </html>
     """
